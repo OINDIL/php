@@ -11,7 +11,4 @@
     } catch (Exception $e) {
         echo "". $e->getMessage();
     }
-    if($connection){
-        echo"Connection established";
-    }
 ?>
