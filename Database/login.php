@@ -1,6 +1,3 @@
-<?php 
-    include("user.php");
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,21 +20,36 @@
 </html>
 
 <?php 
+    include("user.php");
+
     $username = null;
     $password = null;
-
+    $result = null;
 
     if(isset($_POST["submit"])){
-        $username = $_POST["username"];
-        $password = $_POST["password"];
+        $username = filter_input(INPUT_POST,"username", FILTER_SANITIZE_SPECIAL_CHARS);
+        $password = filter_input(INPUT_POST,"password", FILTER_SANITIZE_SPECIAL_CHARS);
         $hash = password_hash($password, PASSWORD_DEFAULT);
 
-        if(!empty($_POST["username"]) && !empty($_POST["password"])){
-            if(password_verify($password,$hash)){
-                echo"logged in";
+        if(!empty($username) && !empty($password)){
+            $sql_query = "SELECT * FROM users WHERE name = {$username}";
+            try{
+                $result = mysqli_query($connection, $sql_query);
+            }catch(mysqli_sql_exception){
+                echo "<script>alert('Error')</script>";
+            }
+
+            if(mysqli_num_rows($result) > 0){
+                $data = mysqli_fetch_assoc($result);
+                if($username == $data["name"] && $hash == $data["password"]){
+                    header("Location: homepage.php");
+                }
+                else{
+                    echo"Wrong credentials";
+                }
             }
             else{
-                echo"Password does not match";
+                echo "<script>alert('No data found!!')</script>";
             }
         }
         else{

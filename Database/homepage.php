@@ -68,6 +68,7 @@ footer {
     <header>
         <h1>Your Brand</h1>
         <p>Welcome to our website!</p>
+        <a href="login.php">Log Out</a>
     </header>
     <section class="main-content">
         <h2>About Us</h2>

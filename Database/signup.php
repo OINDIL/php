@@ -1,7 +1,3 @@
-<?php
-include("user.php");
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,4 +19,35 @@ include("user.php");
         <a href="login.php">Log In</a>
     </form>
 </body>
+
 </html>
+<?php
+include("user.php");
+
+
+
+$username = null;
+$password = null;
+if (isset($_POST["submit"])) {
+    if (!empty($_POST["username"]) && !empty($_POST["password"])) {
+        $username = filter_input(INPUT_POST,"username", FILTER_SANITIZE_SPECIAL_CHARS);
+        $password = filter_input(INPUT_POST,"password", FILTER_SANITIZE_SPECIAL_CHARS);
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+
+
+        $sql_query = "INSERT INTO users (name,password) VALUES ('{$username}','{$hash}')";
+
+        try{
+            mysqli_query($connection,$sql_query);
+            header("Location: homepage.php");
+        }catch(Exception $e){
+            echo"". $e->getMessage();
+        }
+        mysqli_close($connection);
+    }
+    else{
+        echo"<script>alert('Enter username/password')</script>";
+    }
+}
+
+?>
