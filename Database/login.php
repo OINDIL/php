@@ -29,10 +29,10 @@
     if(isset($_POST["submit"])){
         $username = filter_input(INPUT_POST,"username", FILTER_SANITIZE_SPECIAL_CHARS);
         $password = filter_input(INPUT_POST,"password", FILTER_SANITIZE_SPECIAL_CHARS);
+        // echo "username : {$username}<br>";
         $hash = password_hash($password, PASSWORD_DEFAULT);
-
         if(!empty($username) && !empty($password)){
-            $sql_query = "SELECT * FROM users WHERE name = {$username}";
+            $sql_query = "SELECT name,password FROM users WHERE name = '{$username}'";
             try{
                 $result = mysqli_query($connection, $sql_query);
             }catch(mysqli_sql_exception){
@@ -41,11 +41,12 @@
 
             if(mysqli_num_rows($result) > 0){
                 $data = mysqli_fetch_assoc($result);
-                if($username == $data["name"] && $hash == $data["password"]){
-                    header("Location: homepage.php");
+                
+                if($data['name'] == $username && password_verify($password ,$data['password'])){
+                    header('Location: homepage.php');
                 }
                 else{
-                    echo"Wrong credentials";
+                    echo "<script>alert('Wrong Credentials!!')</script>";
                 }
             }
             else{
